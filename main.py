@@ -9,7 +9,7 @@ def main():
     while True:
         raw_data, address = connection.recvfrom(65536)
         dest_mac, src_mac, eth_proto, data = ethernet_frame(raw_data)
-        print(f'\nEthernet Frame: Destination: {dest_mac}, Source: {src_mac}, Protocol: {eth_proto}, Data: {data}')
+        print(f'\nEthernet Frame: Destination: {dest_mac}, Source: {src_mac}, Protocol: {eth_proto}')
 
 
 # Unpack ethernet frame
@@ -21,7 +21,7 @@ def ethernet_frame(data):
 # Formats MAC address to proper format
 def get_mac_address(bytes_address):
     bytes_string = map('{:02x}'.format, bytes_address)
-    mac_address = ':'.join(bytes_address).upper()
+    mac_address = ':'.join(str(bytes_address)).upper()
 
 
 if __name__ == '__main__':
