@@ -32,10 +32,10 @@ def main():
 
     while True:
         raw_data, addr = conn.recvfrom(65536)
-        dest_mac, src_mac, eth_proto, data = ethernet_frame(raw_data)
+        dest_mac, src_mac, eth_proto, data = unpack_ethernet(raw_data)
 
         if eth_proto == 'IPV6':
-            newPacket, nextProto = ipv6Header(data, filter)
+            newPacket, nextProto = unpack_ipv6(data, filter)
             printPacketsV6(filter, nextProto, newPacket)
 
         elif eth_proto == 'IPV4':
@@ -211,9 +211,9 @@ def nextHeader(ipv6_next_header):
     return ipv6_next_header
 
 
-def ipv6Header(data, filter):
-    ipv6_first_word, ipv6_payload_legth, ipv6_next_header, ipv6_hoplimit = struct.unpack(
-        ">IHBB", data[0:8])
+def unpack_ipv6(data):
+    ipv6_first_word, ipv6_payload_length, ipv6_next_header, ipv6_hop_limit = struct.unpack("! I H B B", data[:8])
+
     ipv6_src_ip = socket.inet_ntop(socket.AF_INET6, data[8:24])
     ipv6_dst_ip = socket.inet_ntop(socket.AF_INET6, data[24:40])
 
@@ -231,7 +231,7 @@ def ipv6Header(data, filter):
 
 
 # Unpack Ethernet Frame
-def ethernet_frame(data):
+def unpack_ethernet(data):
     proto = ""
     IpHeader = struct.unpack("!6s6sH", data[0:14])
     dstMac = binascii.hexlify(IpHeader[0])
